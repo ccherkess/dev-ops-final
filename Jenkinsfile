@@ -43,10 +43,10 @@ pipeline {
                 dir('terraform') {
                     dir (".ssh") {
                         unstash 'ssh'
-                        sh '-l'
+                        sh 'ls -a'
                     }
 
-                    sh 'ls -l'
+                    sh 'ls -a'
 
                     sh '''
                         terraform plan \
