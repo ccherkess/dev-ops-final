@@ -100,6 +100,7 @@ pipeline {
             steps {
                 dir('ansible') {
                     unstash 'ansible-inventory'
+                    unstash 'ssh'
 
                     sh 'ls -l'
                     sh 'pwd'
