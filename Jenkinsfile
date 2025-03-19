@@ -117,8 +117,12 @@ pipeline {
 
     post {
         always {
-            sh 'rm -rf id_rsa'
-            sh 'rm -rf id_rsa.pub'
+            cleanWs(
+                cleanWhenNotBuilt: false,
+                deleteDirs: true,
+                disableDeferredWipeout: true,
+                notFailBuild: true
+            )
         }
     }
 }
