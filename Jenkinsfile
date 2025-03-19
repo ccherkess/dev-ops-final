@@ -84,7 +84,7 @@ pipeline {
 
                             [defaults]
                             host_key_checking = False
-                            ansible_ssh_private_key_file = ${WORKDIR}/.ssh
+                            ansible_ssh_private_key_file = ${WORKSPACE}/.ssh
                         """
 
                         stash name: 'ansible-inventory', includes: 'inventory.ini'
