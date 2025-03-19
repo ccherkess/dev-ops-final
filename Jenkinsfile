@@ -24,7 +24,6 @@ pipeline {
             }
 
             steps {
-                sh 'ls -a'
                 dir('terraform') {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init'
@@ -72,20 +71,22 @@ pipeline {
             }
 
             steps {
-                script {
-                    def instanceIps = sh(
-                        script: 'terraform output -json instance_ips',
-                        returnStdout: true
-                    ).trim()
+                dir('terraform') {
+                    script {
+                        def instanceIps = sh(
+                            script: 'terraform output -json instance_ips',
+                            returnStdout: true
+                        ).trim()
 
-                    def ips = readJSON text: instanceIps
+                        def ips = readJSON text: instanceIps
 
-                    writeFile file: 'inventory.ini', text: """
-                        [vm]
-                        ${ips.join("\n")}
-                    """
+                        writeFile file: 'inventory.ini', text: """
+                            [vm]
+                            ${ips.join("\n")}
+                        """
 
-                    stash name: 'ansible-inventory', includes: 'inventory.ini'
+                        stash name: 'ansible-inventory', includes: 'inventory.ini'
+                    }
                 }
             }
         }
