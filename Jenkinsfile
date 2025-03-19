@@ -11,7 +11,7 @@ pipeline {
         stage('Create and Cache .ssh dir') {
             steps {
                 sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
-                stash name: 'ssh', includes: '**'
+                stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
             }
         }
 
