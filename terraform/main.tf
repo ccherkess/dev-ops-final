@@ -38,10 +38,10 @@ resource "yandex_compute_instance" "vm-build" {
   }
 
   metadata = {
-    ssh-keys = [
+    ssh-keys = join("\n", [
       "root:${file(".ssh/id_rsa.pub")}",
       "user:ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABgQCyOAj0Ap/wNzH2Jsqv0fQ1Qot1MGMrvVtm/3P81aFsx4puUT+Et4geekGwx5lol0jSUMsUnwguA/8pEsOcMPvgymfUZBlA3+BXn8FWkWnWr+CuIsHDZbkUsnIKTp9xR0SjOmB7ZwaJz7EZJoTgekFihVp4U++cG8KPQWPuX/Zl8IYXKamHhynbsrH5HUG4YlOBLC4fTEbocYHzBFTzY3ZhmCt+p50Cc+nlC/u8DSey66LByW9tvDzTnC0r3Wyxj5xRao1wmHtIKvbgA8i2tSFrHrb3ndPhfjojUDpP+S/tCQU0vQELWZmv12lhvkRnynwUWG5ddPD+mBrKqEXTgq2/UxtUCggO2KYCqp5NwcgpPR+txqa6n8Id4VT/k1VWoLmVcmLXtT83cWrcHI92e94fDXafJXCVQtIkgT8QnisbeW5EyZIYr9XKakj8Ra9/6a/yAh/dyHOHPqxQopkBGASMf6HhShUtC4AdDGnMx00vqzW5s/ZlktAuwEfitMo+4HU= misha@user-Aspire-A315-23"
-    ]
+    ])
   }
 }
 
