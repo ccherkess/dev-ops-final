@@ -99,12 +99,9 @@ pipeline {
 
             steps {
                 unstash 'ansible-inventory'
+                unstash 'ssh'
 
-                 dir (".ssh") {
-                    unstash 'ssh'
-                 }
-
-                sh 'ansible -i inventory.ini -m ping all'
+                sh 'ansible -i inventory.ini --private-key id_rsa -m ping all'
             }
         }
     }
