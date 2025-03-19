@@ -99,12 +99,13 @@ pipeline {
 
             steps {
                 unstash 'ansible-inventory'
+                unstash 'ssh'
 
-                dir('~/.ssh') {
-                    unstash 'ssh'
-                }
+                sh 'ls -l'
+                sh 'pwd'
+
                 input "Go?"
-                sh 'ansible --ask-vault-pass -k -i inventory.ini -m ping all'
+                sh 'ansible  -i inventory.ini -m ping all'
             }
         }
     }
