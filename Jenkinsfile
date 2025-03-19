@@ -100,11 +100,11 @@ pipeline {
             steps {
                 unstash 'ansible-inventory'
 
-                dir('.shh') {
+                dir('~/.ssh') {
                     unstash 'ssh'
                 }
                 input "Go?"
-                sh 'ansible -i inventory.ini --private-key id_rsa -m ping all'
+                sh 'ansible -i inventory.ini -m ping all'
             }
         }
     }

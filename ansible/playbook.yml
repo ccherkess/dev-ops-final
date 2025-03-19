@@ -1,0 +1,7 @@
+
+---
+- name: build-server configuration
+  hosts: vm
+  become: yes
+
+  tasks:
