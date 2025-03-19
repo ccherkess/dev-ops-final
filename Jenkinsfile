@@ -99,6 +99,11 @@ pipeline {
 
             steps {
                 unstash 'ansible-inventory'
+
+                 dir (".ssh") {
+                    unstash 'ssh'
+                 }
+
                 sh 'ansible -i inventory.ini -m ping all'
             }
         }
