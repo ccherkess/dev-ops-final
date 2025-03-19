@@ -38,7 +38,7 @@ resource "yandex_compute_instance" "vm-build" {
   }
 
   metadata = {
-    ssh-keys = "ubuntu:${file(".ssh/id_rsa.pub")}"
+    ssh-keys = "root:${file(".ssh/id_rsa.pub")}"
   }
 }
 
