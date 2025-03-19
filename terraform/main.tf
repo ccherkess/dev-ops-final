@@ -42,6 +42,6 @@ resource "yandex_compute_instance" "vm-build" {
   }
 }
 
-output "instance_ips" {
+output "instance_ip" {
   value = yandex_compute_instance.vm-build.network_interface[0].nat_ip_address
 }

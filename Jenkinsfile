@@ -73,16 +73,14 @@ pipeline {
             steps {
                 dir('terraform') {
                     script {
-                        def instanceIps = sh(
-                            script: 'terraform output -json instance_ips',
+                        def instanceIp = sh(
+                            script: 'terraform output -json instance_ip',
                             returnStdout: true
-                        ).trim()
-
-                        def ips = readJSON text: instanceIps
+                        );
 
                         writeFile file: 'inventory.ini', text: """
                             [vm]
-                            ${ips.join("\n")}
+                            ${instanceIp}
                         """
 
                         stash name: 'ansible-inventory', includes: 'inventory.ini'
