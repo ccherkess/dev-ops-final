@@ -83,7 +83,7 @@ pipeline {
                             ${instanceIp}
 
                             [defaults]
-                            host_key_checking = False
+                            host_key_checking = false
                             ansible_ssh_private_key_file = ${WORKSPACE}/.ssh
                         """
 
@@ -104,7 +104,7 @@ pipeline {
             steps {
                 unstash 'ansible-inventory'
 
-                dir ('.ssh') {
+                dir ('${WORKSPACE}/.ssh') {
                     unstash 'ssh'
                 }
 
