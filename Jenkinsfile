@@ -2,8 +2,6 @@ pipeline {
     agent any
 
     environment {
-        SSH_KEYS_DIR = 'ssh-keys-dir'
-
         YC_TOKEN = credentials('yc-token')
         YC_CLOUD_ID = credentials('yc-cloud-id')
         YC_FOLDER_ID = credentials('yc-folder-id')
@@ -12,12 +10,8 @@ pipeline {
     stages {
         stage('Create and Cache .ssh dir') {
             steps {
-                dir('${SSH_KEYS_DIR}') {
-                    sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
-                    sh 'ls -a'
-                    stash name: 'ssh', includes: '**'
-                }
-                sh 'ls -a'
+                sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
+                stash name: 'ssh', includes: '**'
             }
         }
 
@@ -30,6 +24,7 @@ pipeline {
             }
 
             steps {
+                sh 'ls -a'
                 dir('terraform') {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init'
@@ -71,7 +66,8 @@ pipeline {
 
     post {
         always {
-            sh 'rm -rf ${SSH_KEYS_DIR}'
+            sh 'rm -rf id_rsa'
+            sh 'rm -rf id_rsa.pub'
         }
     }
 }
