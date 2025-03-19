@@ -81,6 +81,10 @@ pipeline {
                         writeFile file: 'inventory.ini', text: """
                             [vm]
                             ${instanceIp}
+
+                            [defaults]
+                            host_key_checking = False
+                            ansible_ssh_private_key_file = ${WORKDIR}/.ssh
                         """
 
                         stash name: 'ansible-inventory', includes: 'inventory.ini'
@@ -99,7 +103,10 @@ pipeline {
 
             steps {
                 unstash 'ansible-inventory'
-                unstash 'ssh'
+
+                dir ('.ssh') {
+                    unstash 'ssh'
+                }
 
                 sh 'ls -l'
                 sh 'pwd'
