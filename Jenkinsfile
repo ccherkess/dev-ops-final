@@ -62,6 +62,42 @@ pipeline {
                 }
             }
         }
+
+        stage('Generate and Cache Ansible Inventory') {
+            agent {
+                docker {
+                    image 'hashicorp/terraform:latest'
+                    args '--entrypoint='
+                }
+            }
+
+            steps {
+                script {
+                    def instanceIps = sh(
+                        script: 'terraform output -json instance_ips',
+                        returnStdout: true
+                    ).trim()
+
+                    def ips = readJSON text: instanceIps
+
+                    writeFile file: 'inventory.ini', text: """
+                        [vm]
+                        ${ips.join("\n")}
+                    """
+
+                    stash name: 'ansible-inventory', includes: 'inventory.ini'
+                }
+            }
+        }
+
+
+        stage('TEST ansible') {
+            steps {
+                unstash 'ansible-inventory'
+                sh 'ls'
+                sh 'cat inventory.ini'
+            }
+        }
     }
 
     post {
