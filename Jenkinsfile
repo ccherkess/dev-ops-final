@@ -81,10 +81,6 @@ pipeline {
                         writeFile file: 'inventory.ini', text: """
                             [vm]
                             ${instanceIp}
-
-                            [defaults]
-                            host_key_checking = false
-                            ansible_ssh_private_key_file = ${WORKSPACE}/.ssh
                         """
 
                         stash name: 'ansible-inventory', includes: 'inventory.ini'
@@ -102,17 +98,15 @@ pipeline {
             }
 
             steps {
-                unstash 'ansible-inventory'
+                dir('ansible') {
+                    unstash 'ansible-inventory'
 
-                dir ('${WORKSPACE}/.ssh') {
-                    unstash 'ssh'
+                    sh 'ls -l'
+                    sh 'pwd'
+
+                    input "Go?"
+                    sh 'ansible  -i inventory.ini -m ping all'
                 }
-
-                sh 'ls -l'
-                sh 'pwd'
-
-                input "Go?"
-                sh 'ansible  -i inventory.ini -m ping all'
             }
         }
     }
