@@ -106,7 +106,8 @@ pipeline {
                     unstash 'ssh'
 
                     sh 'ls -l'
-                    sh 'pwd'
+                    sh 'cat id_rsa'
+                    sh 'cat id_rsa.pub'
 
                     input "Go?"
                     sh 'ansible  -i inventory.ini -m ping all'
