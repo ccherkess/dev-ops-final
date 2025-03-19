@@ -89,12 +89,17 @@ pipeline {
             }
         }
 
-
         stage('TEST ansible') {
+            agent {
+                docker {
+                    image 'alpine/ansible:latest'
+                    args '--entrypoint='
+                }
+            }
+
             steps {
                 unstash 'ansible-inventory'
-                sh 'ls'
-                sh 'cat inventory.ini'
+                sh 'ansible -i inventory.ini -m ping all'
             }
         }
     }
