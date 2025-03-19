@@ -104,7 +104,7 @@ pipeline {
                     unstash 'ssh'
                 }
                 input "Go?"
-                sh 'ansible -i inventory.ini -m ping all'
+                sh 'ansible --ask-vault-pass -k -i inventory.ini -m ping all'
             }
         }
     }
