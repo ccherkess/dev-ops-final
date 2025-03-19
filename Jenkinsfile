@@ -78,10 +78,7 @@ pipeline {
                             returnStdout: true
                         ).trim()
 
-                        def ips = sh(
-                            script: "echo '${instanceIps}' | jq -r '.[]'",
-                            returnStdout: true
-                        ).trim().split("\n")
+                        def ips = readJSON text: instanceIps
 
                         writeFile file: 'inventory.ini', text: """
                             [vm]
