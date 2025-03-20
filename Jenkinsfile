@@ -112,23 +112,6 @@ pipeline {
                 }
             }
         }
-
-        stage('Terraform Destroy on Failure') {
-            when {
-                expression { currentBuild.result == 'FAILURE' }
-            }
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest'
-                    args '--entrypoint='
-                }
-            }
-            steps {
-                dir('terraform') {
-                    sh 'terraform destroy -auto-approve'
-                }
-            }
-        }
     }
 
     post {

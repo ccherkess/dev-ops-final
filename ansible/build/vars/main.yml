@@ -1,4 +1,4 @@
 ---
 # vars file for build
-dest_dir = "{{ undef(hint='You must specify your dest dir') }}"
-repo_url = "{{ undef(hint='You must specify your git repository url') }}"
+dest_dir: "{{ undef(hint='You must specify your dest dir') }}"
+repo_url: "{{ undef(hint='You must specify your git repository url') }}"
