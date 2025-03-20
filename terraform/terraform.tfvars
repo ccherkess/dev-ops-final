@@ -1,5 +1,4 @@
-yc_users_config =
-<<-EOT
+yc_users_config = <<-EOT
   #cloud-config
   users:
     - name: user
