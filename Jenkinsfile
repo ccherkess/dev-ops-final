@@ -115,6 +115,21 @@ pipeline {
     }
 
     post {
+        failure {
+            agent {
+                docker {
+                    image 'hashicorp/terraform:latest'
+                    args '--entrypoint='
+                }
+            }
+
+            steps {
+                dir('terraform') {
+                    sh 'cp .terraformrc ~/'
+                    sh 'terraform destroy'
+                }
+            }
+        }
         always {
             cleanWs(
                 cleanWhenNotBuilt: false,
