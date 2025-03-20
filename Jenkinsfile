@@ -104,17 +104,11 @@ pipeline {
                     unstash 'ansible-inventory'
                     unstash 'ssh'
 
-                    input "Ok?"
-
-                    sh '''
-                        ansible  -i inventory.ini -m ping all
-                     '''
-
                     sh '''
                         ansible-playbook build_app_image.yml \
                             -i inventory.ini \
                             --extra-vars "repo_url = ${APP_REPOSITORY} dest_dir = /app"
-                     '''
+                    '''
                 }
             }
         }
