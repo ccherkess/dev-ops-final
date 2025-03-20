@@ -34,12 +34,6 @@ variable "yc_boot_disk_type" {
   default = "network-ssd"
 }
 
-variable "yc_users_config" {
-  description = "Yandex users cloud config"
-  type = string
-  sensitive   = true
-}
-
 data "yandex_compute_image" "ubuntu" {
   family = "ubuntu-2004-lts"
 }
