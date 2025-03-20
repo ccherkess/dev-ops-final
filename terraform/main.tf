@@ -47,7 +47,8 @@ resource "yandex_compute_instance" "vm-build" {
           sudo: 'ALL=(ALL) NOPASSWD:ALL'
           ssh_authorized_keys:
             - ${file(".ssh/id_rsa.pub")}
-    EOT)
+    EOT
+    )
   }
 }
 
