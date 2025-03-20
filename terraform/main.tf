@@ -38,8 +38,7 @@ resource "yandex_compute_instance" "vm-build" {
   }
 
   metadata = {
-    sensitive = true
-    user-data = <<-EOT
+    user-data = sensitive(<<-EOT
       #cloud-config
       users:
         - name: user
@@ -48,7 +47,7 @@ resource "yandex_compute_instance" "vm-build" {
           sudo: 'ALL=(ALL) NOPASSWD:ALL'
           ssh_authorized_keys:
             - ${file(".ssh/id_rsa.pub")}
-    EOT
+    EOT)
   }
 }
 
