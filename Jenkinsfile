@@ -106,8 +106,8 @@ pipeline {
 
                     sh '''
                         ansible-playbook build_app_image.yml \
-                            -i inventory.ini
-                            -e "repo_url = ${APP_REPOSITORY} dest_dir = /app"
+                            -i inventory.ini \
+                            --extra-vars "repo_url = ${APP_REPOSITORY} dest_dir = /app"
                      '''
                 }
             }
