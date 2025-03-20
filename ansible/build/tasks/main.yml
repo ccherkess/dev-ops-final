@@ -1,0 +1,19 @@
+---
+# tasks file for build
+- name: Install packages
+  apt: name={{ item }} state=present update_cache=yes
+  loop:
+    - git
+    - openjdk-8-jdk
+    - maven
+
+- name: Clone repository
+  git:
+    repo: "{{ repo_url }}"
+    dest: "{{ dest_dir }}"
+    version: master
+
+- name: Build app
+  command: mvn clean package
+  args:
+    chdir: "{{ dest_dir }}"

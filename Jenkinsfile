@@ -5,6 +5,8 @@ pipeline {
         YC_TOKEN = credentials('yc-token')
         YC_CLOUD_ID = credentials('yc-cloud-id')
         YC_FOLDER_ID = credentials('yc-folder-id')
+
+        APP_REPOSITORY = "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
     }
 
     stages {
@@ -92,7 +94,7 @@ pipeline {
             }
         }
 
-        stage('TEST ansible') {
+        stage('Build and push app image') {
             agent {
                 docker {
                     image 'alpine/ansible:latest'
@@ -105,12 +107,11 @@ pipeline {
                     unstash 'ansible-inventory'
                     unstash 'ssh'
 
-                    sh 'ls -l'
-                    sh 'cat id_rsa'
-                    sh 'cat id_rsa.pub'
-
-                    input "Go?"
-                    sh 'ansible  -i inventory.ini -m ping all'
+                    sh '''
+                        ansible-playbook build_app_image.yml \
+                            -i inventory.ini
+                            -e "repo_url = ${APP_REPOSITORY} dest_dir = /app"
+                     '''
                 }
             }
         }

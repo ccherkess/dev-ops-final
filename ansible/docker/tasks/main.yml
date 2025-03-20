@@ -1,0 +1,13 @@
+---
+# tasks file for docker
+- name: Install packages
+  apt: name={{ item }} state=present update_cache=yes
+  loop:
+    - docker.io
+
+- name: Login docker
+  community.docker.docker_login:
+    registry_url: "{{ registry_url }}"
+    username: "{{ username }}"
+    password: "{{ password }}"
+    reauthorize: true

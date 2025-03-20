@@ -1,0 +1,14 @@
+
+---
+- name: Build and push application docker image
+  hosts: vm
+  become: yes
+
+  roles:
+#    - role: docker
+#      registry_url: "{{ registry_url }}"
+#      username: "{{ username }}"
+#      password: "{{ password }}"
+    - role: build
+      repo_url: "{{ repo_url }}"
+      dest_url: "{{ dest_url }}"

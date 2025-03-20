@@ -1,0 +1,5 @@
+---
+# vars file for docker
+registry_url
+username
+password
