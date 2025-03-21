@@ -123,7 +123,7 @@ pipeline {
                                 password=${DOCKER_PASSWORD} \
                                 image_tag=${BUILD_NUMBER} \
                                 docker_image_name=${DOCKER_IMAGE_NAME} \
-                                war_file_name=${WAR_FILE_NAME}
+                                war_file=${WAR_FILE_NAME}
                             "
                     '''
                 }
