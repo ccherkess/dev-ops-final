@@ -14,7 +14,7 @@
     - name: Run Docker Image
       docker_container:
         name: "app"
-        image: "{{ docker_image_name }}:{{ image_tag }}"
+        image: "{{ registry_url }}/{{ docker_image_name }}:{{ image_tag }}"
         state: started
         ports:
           - "{{ app_port }}:8080"
