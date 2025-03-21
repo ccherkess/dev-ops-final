@@ -66,8 +66,3 @@
     - name: Logout Docker
       docker_login:
         state: absent
-
-    - name: Clean up Docker container
-      docker_container:
-        name: build_app
-        state: absent
