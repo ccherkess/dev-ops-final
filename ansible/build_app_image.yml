@@ -35,7 +35,7 @@
       docker_image:
         name: "{{ docker_image_name }}"
         build:
-          path: "{{ dest_url }}"
+          path: "/app/target"
           dockerfile: "{{ dockerfile_path }}"
         source: build
         state: present
