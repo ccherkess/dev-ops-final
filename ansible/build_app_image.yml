@@ -5,6 +5,7 @@
   become: yes
 
   vars:
+    dest_dir: /app
     dockerfile_path: /dockerfile
 
   roles:
@@ -56,7 +57,7 @@
         name: "{{ docker_image_name }}"
         tag: "{{ image_tag }}"
         build:
-          path: "/app/target"
+          path: "{{ dest_dir }}/target"
           dockerfile: "{{ dockerfile_path }}"
         source: build
         state: present

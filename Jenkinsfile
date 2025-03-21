@@ -117,7 +117,6 @@ pipeline {
                             -i inventory.ini \
                             --extra-vars "\
                                 repo_url=${APP_REPOSITORY} \
-                                dest_dir=/app \
                                 registry_url=${DOCKER_DOMAIN} \
                                 username=${DOCKER_USERNAME} \
                                 password=${DOCKER_PASSWORD} \
