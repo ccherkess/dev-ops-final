@@ -32,7 +32,6 @@
       command: mvn clean package
       args:
         chdir: "{{ dest_dir }}"
-      notify: fetch war file
 
     - name: Rename War File
       copy:
