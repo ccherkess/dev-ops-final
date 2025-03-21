@@ -15,7 +15,12 @@ pipeline {
 
     stages {
         stage('Create and Cache .ssh dir') {
-            agent any
+            agent {
+                docker {
+                    image 'ubuntu:latest'
+                    args '--entrypoint='
+                }
+            }
 
             steps {
                 sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
