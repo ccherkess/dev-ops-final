@@ -138,7 +138,7 @@ pipeline {
                 }
             }
             steps {
-                dir('terraform') {
+                dir('terraform/build') {
                     sh 'terraform destroy -auto-approve'
                 }
 
