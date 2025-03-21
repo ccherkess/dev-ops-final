@@ -24,7 +24,7 @@
         image: "{{ docker_image_name }}:{{ image_tag }}"
         state: started
         ports:
-          - "{{ app_port }}:{{ 8080 }}"
+          - "{{ app_port }}:8080"
         restart_policy: always
 
     - name: Logout Docker
