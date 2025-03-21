@@ -110,18 +110,18 @@ pipeline {
                     unstash 'ansible-inventory'
                     unstash 'ssh'
 
-                    sh '''
-                        ansible-playbook build_app_image.yml \
-                            -i inventory.ini \
-                            --extra-vars "\
-                                repo_url=${APP_REPOSITORY} \
-                                dest_dir=/app \
-                                registry_url=${DOCKER_DOMAIN} \
-                                username=${DOCKER_USERNAME} \
-                                password=${DOCKER_PASSWORD} \
-                                image_tag=${BUILD_NUMBER}
-                            "
-                    '''
+//                     sh '''
+//                         ansible-playbook build_app_image.yml \
+//                             -i inventory.ini \
+//                             --extra-vars "\
+//                                 repo_url=${APP_REPOSITORY} \
+//                                 dest_dir=/app \
+//                                 registry_url=${DOCKER_DOMAIN} \
+//                                 username=${DOCKER_USERNAME} \
+//                                 password=${DOCKER_PASSWORD} \
+//                                 image_tag=${BUILD_NUMBER}
+//                             "
+//                     '''
                 }
             }
         }

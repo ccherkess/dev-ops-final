@@ -107,10 +107,11 @@ resource "yandex_compute_instance" "vm-run" {
 }
 
 resource "null_resource" "wait_for_run_init" {
-  count = var.run ? 1 : 0
+  for_each = yandex_compute_instance.vm-run
+
   provisioner "local-exec" {
     command = <<-EOF
-      until nc -z ${yandex_compute_instance.vm-run[*].network_interface[0].nat_ip_address} 22; do
+      until nc -z ${each.network_interface[0].nat_ip_address} 22; do
           echo "Waiting for VM to be ready..."
           sleep 5
         done
