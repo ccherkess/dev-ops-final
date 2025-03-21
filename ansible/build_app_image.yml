@@ -49,11 +49,6 @@
         push: yes
         source: local
 
-    - name: Ensure Docker container is running
-      docker_container:
-        name: "{{ docker_container_name }}"
-        image: "{{ docker_image_name }}"
-        state: started
-        ports:
-          - "8080:8080"
-        restart_policy: always
+    - name: Logout Docker
+      docker_login:
+        state: absent

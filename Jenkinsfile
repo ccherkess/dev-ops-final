@@ -52,14 +52,14 @@ pipeline {
                     }
 
                     sh '''
-                        terraform plan \
+                        terraform plan -no-color -chdir=build \
                         -var="yc_token=${YC_TOKEN}" \
                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
                         -var="yc_folder_id=${YC_FOLDER_ID}"
                     '''
 
                     sh '''
-                        terraform apply -auto-approve \
+                        terraform apply -auto-approve -no-color -chdir=build \
                         -var="yc_token=${YC_TOKEN}" \
                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
                         -var="yc_folder_id=${YC_FOLDER_ID}"
@@ -108,18 +108,23 @@ pipeline {
                     unstash 'ansible-inventory'
                     unstash 'ssh'
 
-                    sh '''
-                        ansible-playbook build_app_image.yml \
-                            -i inventory.ini \
-                            --extra-vars "\
-                                repo_url=${APP_REPOSITORY} \
-                                dest_dir=/app \
-                                registry_url=${DOCKER_DOMAIN} \
-                                username=${DOCKER_USERNAME} \
-                                password=${DOCKER_PASSWORD} \
-                                image_tag=${BUILD_NUMBER}
-                            "
-                    '''
+                    script {
+                        try {
+                            sh '''
+                                ansible-playbook build_app_image.yml \
+                                    -i inventory.ini \
+                                    --extra-vars "\
+                                        repo_url=${APP_REPOSITORY} \
+                                        dest_dir=/app \
+                                        registry_url=${DOCKER_DOMAIN} \
+                                        username=${DOCKER_USERNAME} \
+                                        password=${DOCKER_PASSWORD} \
+                                        image_tag=${BUILD_NUMBER}
+                                    "
+                            '''
+                        } finally {
+                            sh 'terraform destroy -auto-approve'
+                        }
                 }
             }
         }
