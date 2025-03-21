@@ -107,7 +107,7 @@ resource "yandex_compute_instance" "vm-run" {
 }
 
 resource "null_resource" "wait_for_run_init" {
-  for_each = var.run ? yandex_compute_instance.vm-run : {}
+  for_each = var.run ? yandex_compute_instance.vm-run : []
 
   provisioner "local-exec" {
     command = <<-EOF
