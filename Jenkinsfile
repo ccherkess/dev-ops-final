@@ -37,114 +37,114 @@ pipeline {
             }
         }
 
-        stage('Create Assembly VM') {
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest'
-                    args '--entrypoint='
-                }
-            }
-
-            steps {
-                dir('terraform') {
-                    dir (".ssh") {
-                        unstash 'ssh'
-                    }
-
-                    sh '''
-                        terraform plan -no-color \
-                        -var="yc_token=${YC_TOKEN}" \
-                        -var="yc_cloud_id=${YC_CLOUD_ID}" \
-                        -var="yc_folder_id=${YC_FOLDER_ID}" \
-                        -var="build=true"
-                    '''
-
-                    sh '''
-                        terraform apply -auto-approve -no-color \
-                        -var="yc_token=${YC_TOKEN}" \
-                        -var="yc_cloud_id=${YC_CLOUD_ID}" \
-                        -var="yc_folder_id=${YC_FOLDER_ID}" \
-                        -var="build=true"
-                    '''
-                }
-            }
-        }
-
-        stage('Generate and Cache Ansible Build Inventory') {
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest'
-                    args '--entrypoint='
-                }
-            }
-
-            steps {
-                dir('terraform') {
-                    script {
-                        def instanceIp = sh(
-                            script: 'terraform output -json build_instance_ip',
-                            returnStdout: true
-                        );
-
-                        writeFile file: 'inventory.ini', text: """
-                            [vm]
-                            ${instanceIp}
-                        """
-
-                        stash name: 'ansible-inventory', includes: 'inventory.ini'
-                    }
-                }
-            }
-        }
-
-        stage('Ansible Build And Push App Image') {
-            agent {
-                docker {
-                    image 'alpine/ansible:latest'
-                    args '--entrypoint='
-                }
-            }
-
-            steps {
-                dir('ansible') {
-                    unstash 'ansible-inventory'
-                    unstash 'ssh'
-
+//         stage('Create Assembly VM') {
+//             agent {
+//                 docker {
+//                     image 'hashicorp/terraform:latest'
+//                     args '--entrypoint='
+//                 }
+//             }
+//
+//             steps {
+//                 dir('terraform') {
+//                     dir (".ssh") {
+//                         unstash 'ssh'
+//                     }
+//
 //                     sh '''
-//                         ansible-playbook build_app_image.yml \
-//                             -i inventory.ini \
-//                             --extra-vars "\
-//                                 repo_url=${APP_REPOSITORY} \
-//                                 dest_dir=/app \
-//                                 registry_url=${DOCKER_DOMAIN} \
-//                                 username=${DOCKER_USERNAME} \
-//                                 password=${DOCKER_PASSWORD} \
-//                                 image_tag=${BUILD_NUMBER}
-//                             "
+//                         terraform plan -no-color \
+//                         -var="yc_token=${YC_TOKEN}" \
+//                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
+//                         -var="yc_folder_id=${YC_FOLDER_ID}" \
+//                         -var="build=true"
 //                     '''
-                }
-            }
-        }
-
-        stage('Terraform Destroy Assembly VM') {
-            agent {
-                docker {
-                    image 'hashicorp/terraform:latest'
-                    args '--entrypoint='
-                }
-            }
-            steps {
-                dir('terraform') {
-                    sh '''
-                        terraform destroy -auto-approve -no-color \
-                            -var="yc_token=${YC_TOKEN}" \
-                            -var="yc_cloud_id=${YC_CLOUD_ID}" \
-                            -var="yc_folder_id=${YC_FOLDER_ID}" \
-                            -var="build=true"
-                    '''
-                }
-            }
-        }
+//
+//                     sh '''
+//                         terraform apply -auto-approve -no-color \
+//                         -var="yc_token=${YC_TOKEN}" \
+//                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
+//                         -var="yc_folder_id=${YC_FOLDER_ID}" \
+//                         -var="build=true"
+//                     '''
+//                 }
+//             }
+//         }
+//
+//         stage('Generate and Cache Ansible Build Inventory') {
+//             agent {
+//                 docker {
+//                     image 'hashicorp/terraform:latest'
+//                     args '--entrypoint='
+//                 }
+//             }
+//
+//             steps {
+//                 dir('terraform') {
+//                     script {
+//                         def instanceIp = sh(
+//                             script: 'terraform output -json build_instance_ip',
+//                             returnStdout: true
+//                         );
+//
+//                         writeFile file: 'inventory.ini', text: """
+//                             [vm]
+//                             ${instanceIp}
+//                         """
+//
+//                         stash name: 'ansible-inventory', includes: 'inventory.ini'
+//                     }
+//                 }
+//             }
+//         }
+//
+//         stage('Ansible Build And Push App Image') {
+//             agent {
+//                 docker {
+//                     image 'alpine/ansible:latest'
+//                     args '--entrypoint='
+//                 }
+//             }
+//
+//             steps {
+//                 dir('ansible') {
+//                     unstash 'ansible-inventory'
+//                     unstash 'ssh'
+//
+// //                     sh '''
+// //                         ansible-playbook build_app_image.yml \
+// //                             -i inventory.ini \
+// //                             --extra-vars "\
+// //                                 repo_url=${APP_REPOSITORY} \
+// //                                 dest_dir=/app \
+// //                                 registry_url=${DOCKER_DOMAIN} \
+// //                                 username=${DOCKER_USERNAME} \
+// //                                 password=${DOCKER_PASSWORD} \
+// //                                 image_tag=${BUILD_NUMBER}
+// //                             "
+// //                     '''
+//                 }
+//             }
+//         }
+//
+//         stage('Terraform Destroy Assembly VM') {
+//             agent {
+//                 docker {
+//                     image 'hashicorp/terraform:latest'
+//                     args '--entrypoint='
+//                 }
+//             }
+//             steps {
+//                 dir('terraform') {
+//                     sh '''
+//                         terraform destroy -auto-approve -no-color \
+//                             -var="yc_token=${YC_TOKEN}" \
+//                             -var="yc_cloud_id=${YC_CLOUD_ID}" \
+//                             -var="yc_folder_id=${YC_FOLDER_ID}" \
+//                             -var="build=true"
+//                     '''
+//                 }
+//             }
+//         }
 
         stage('Create Run VMs') {
             agent {
