@@ -37,10 +37,10 @@
         state: started
 
     - name: Rename War File
-      file:
+      copy:
+        remote_src: True
         dest: "{{ dest_dir }}/target/{{ war_file}}"
         path: "{{ dest_dir }}/target/app.war"
-        state: file
 
     - name: Copy Dockerfile
       copy:
