@@ -11,12 +11,12 @@
       password: "{{ password }}"
 
   tasks:
-    - name: Pull Docker image to registry
+    - name: Pull Docker image from registry
       docker_image:
-        name: "{{ docker_image_name }}"
-        repository: "{{ registry_url }}/{{ docker_image_name }}"
-        tag: "{{ image_tag }}"
-        pull: yes
+          name: "{{ docker_image_name }}"
+          repository: "{{ registry_url }}/{{ docker_image_name }}"
+          tag: "{{ image_tag }}"
+          pull: yes
 
     - name: Run Docker Image
       docker_container:
