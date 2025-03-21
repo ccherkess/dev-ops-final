@@ -33,8 +33,6 @@ pipeline {
                 dir('terraform/build') {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init -no-color'
-
-                    stash name: 'terraform', includes: '*'
                 }
             }
         }
@@ -143,8 +141,12 @@ pipeline {
             }
             steps {
                 dir('terraform/build') {
-                    unstash 'terraform'
-                    sh 'terraform destroy -auto-approve -no-color'
+                    sh '''
+                        terraform destroy -auto-approve -no-color \
+                            -var="yc_token=${YC_TOKEN}" \
+                            -var="yc_cloud_id=${YC_CLOUD_ID}" \
+                            -var="yc_folder_id=${YC_FOLDER_ID}"
+                    '''
                 }
 
                 script {
