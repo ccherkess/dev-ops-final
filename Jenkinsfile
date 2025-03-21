@@ -1,5 +1,7 @@
 pipeline {
-    agent any
+    agent {
+      label 'whatever'
+    }
 
     environment {
         YC_TOKEN = credentials('yc-token')
