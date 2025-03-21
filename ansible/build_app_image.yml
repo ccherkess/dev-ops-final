@@ -4,11 +4,55 @@
   hosts: vm
   become: yes
 
+  vars:
+    war_file: hello-1.0.war
+    dockerfile_path: /dockerfile
+    docker_image_name: app
+
   roles:
-#    - role: docker
-#      registry_url: "{{ registry_url }}"
-#      username: "{{ username }}"
-#      password: "{{ password }}"
+    - role: docker
+      registry_url: "{{ registry_url }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
     - role: build
       repo_url: "{{ repo_url }}"
       dest_url: "{{ dest_url }}"
+
+  tasks:
+    - name: Create Dockerfile
+      copy:
+        dest: "{{ dockerfile_path }}"
+        content: |
+          FROM tomcat:9.0
+          WORKDIR /usr/local/tomcat
+          RUN rm -rf webapps/*
+          COPY {{ war_file }} webapps/ROOT.war
+          EXPOSE {{ tomcat_port }}
+          CMD ["catalina.sh", "run"]
+
+    - name: Build Docker image
+      docker_image:
+        name: "{{ docker_image_name }}"
+        build:
+          path: "{{ dest_url }}"
+          dockerfile: "{{ dockerfile_path }}"
+        source: build
+        state: present
+
+    - name: Push Docker image to registry
+      docker_image:
+        name: "{{ docker_image_name }}"
+        repository: "{{ registry_url }}/{{ docker_image_name }}"
+        tag: "{{ image_tag }}"
+        push: yes
+        source: local
+
+    - name: Ensure Docker container is running
+      docker_container:
+        name: "{{ docker_container_name }}"
+        image: "{{ docker_image_name }}"
+        state: started
+        ports:
+          - "8080:8080"
+        restart_policy: always

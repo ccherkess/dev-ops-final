@@ -6,6 +6,10 @@ pipeline {
         YC_CLOUD_ID = credentials('yc-cloud-id')
         YC_FOLDER_ID = credentials('yc-folder-id')
 
+        DOCKER_DOMAIN = credentials('docker-domain')
+        DOCKER_USERNAME = credentials('docker-username')
+        DOCKER_PASSWORD = credentials('docker-password')
+
         APP_REPOSITORY = "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
     }
 
@@ -107,7 +111,14 @@ pipeline {
                     sh '''
                         ansible-playbook build_app_image.yml \
                             -i inventory.ini \
-                            --extra-vars "repo_url=${APP_REPOSITORY} dest_dir=/app"
+                            --extra-vars "\
+                                repo_url=${APP_REPOSITORY} \
+                                dest_dir=/app \
+                                registry_url=${DOCKER_DOMAIN} \
+                                username=${DOCKER_USERNAME} \
+                                password=${DOCKER_PASSWORD} \
+                                image_tag=${BUILD_NUMBER}
+                            "
                     '''
                 }
             }

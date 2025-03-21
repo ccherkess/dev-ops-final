@@ -1,5 +1,5 @@
 ---
 # vars file for docker
-registry_url
-username
-password
+registry_url: "{{ undef(hint='You must specify your docker registry url') }}"
+username: "{{ undef(hint='You must specify your docker username') }}"
+password: "{{ undef(hint='You must specify your docker password') }}"
