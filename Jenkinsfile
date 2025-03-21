@@ -26,8 +26,8 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
+                    reuseNode true
                 }
-                reuseNode true
             }
 
             steps {
