@@ -75,7 +75,7 @@ resource "yandex_compute_instance" "vm-run" {
   resources {
     core_fraction = 100
     cores  = 16
-    memory = 8
+    memory = 16
   }
 
   boot_disk {
@@ -91,16 +91,6 @@ resource "yandex_compute_instance" "vm-run" {
     nat = true
   }
 
-  # provisioner "local-exec" {
-  #   command = <<EOT
-  #     until nc -z ${yandex_compute_instance.vm-run[count.index].network_interface[0].nat_ip_address} 22; do
-  #       echo "Waiting for VM to be ready..."
-  #       sleep 5
-  #     done
-  #     echo "VM is ready!"
-  #   EOT
-  # }
-
   metadata = {
     user-data = sensitive(<<-EOT
       #cloud-config
@@ -113,6 +103,18 @@ resource "yandex_compute_instance" "vm-run" {
             - ${file(".ssh/id_rsa.pub")}
     EOT
     )
+  }
+}
+
+resource "null_resource" "wait_for_run_init" {
+  provisioner "local-exec" {
+    command = <<-EOF
+      until nc -z ${yandex_compute_instance.vm-run[*].network_interface[0].nat_ip_address} 22; do
+          echo "Waiting for VM to be ready..."
+          sleep 5
+        done
+        echo "VM is ready!"
+    EOF
   }
 }
 
