@@ -34,6 +34,24 @@ variable "yc_boot_disk_type" {
   default = "network-ssd"
 }
 
+variable "build" {
+  type    = bool
+  default = false
+  description = "Determines whether to create a build VM"
+}
+
+variable "run" {
+  type    = bool
+  default = false
+  description = "Determines whether to create a run VM"
+}
+
+variable "run_count" {
+  type    = number
+  default = 1
+  description = "Run VM counts"
+}
+
 data "yandex_compute_image" "ubuntu" {
   family = "ubuntu-2004-lts"
 }

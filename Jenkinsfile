@@ -55,20 +55,22 @@ pipeline {
                         terraform plan -no-color \
                         -var="yc_token=${YC_TOKEN}" \
                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
-                        -var="yc_folder_id=${YC_FOLDER_ID}"
+                        -var="yc_folder_id=${YC_FOLDER_ID}" \
+                        -var="build=true"
                     '''
 
                     sh '''
                         terraform apply -auto-approve -no-color \
                         -var="yc_token=${YC_TOKEN}" \
                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
-                        -var="yc_folder_id=${YC_FOLDER_ID}"
+                        -var="yc_folder_id=${YC_FOLDER_ID}" \
+                        -var="build=true"
                     '''
                 }
             }
         }
 
-        stage('Generate and Cache Ansible Inventory') {
+        stage('Generate and Cache Ansible Build Inventory') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -80,7 +82,7 @@ pipeline {
                 dir('terraform/build') {
                     script {
                         def instanceIp = sh(
-                            script: 'terraform output -json instance_ip',
+                            script: 'terraform output -json build_instance_ip',
                             returnStdout: true
                         );
 
@@ -132,7 +134,7 @@ pipeline {
             }
         }
 
-        stage('Terraform Destroy on Failure') {
+        stage('Terraform Destroy assembly VM') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -152,6 +154,68 @@ pipeline {
                 script {
                     if (env.DESTROY_ON_FAILURE == true) {
                         throw new RuntimeException()
+                    }
+                }
+            }
+        }
+
+        stage('Create run VMs') {
+            agent {
+                docker {
+                    image 'hashicorp/terraform:latest'
+                    args '--entrypoint='
+                }
+            }
+
+            steps {
+                dir('terraform/build') {
+                    dir (".ssh") {
+                        unstash 'ssh'
+                    }
+
+                    sh '''
+                        terraform plan -no-color \
+                        -var="yc_token=${YC_TOKEN}" \
+                        -var="yc_cloud_id=${YC_CLOUD_ID}" \
+                        -var="yc_folder_id=${YC_FOLDER_ID}" \
+                        -var="run=true" -var="run_count=3"
+                    '''
+
+                    sh '''
+                        terraform apply -auto-approve -no-color \
+                        -var="yc_token=${YC_TOKEN}" \
+                        -var="yc_cloud_id=${YC_CLOUD_ID}" \
+                        -var="yc_folder_id=${YC_FOLDER_ID}" \
+                        -var="run=true" -var="run_count=3"
+                    '''
+                }
+            }
+        }
+
+        stage('Generate and Cache Ansible Run Inventory') {
+            agent {
+                docker {
+                    image 'hashicorp/terraform:latest'
+                    args '--entrypoint='
+                }
+            }
+
+            steps {
+                dir('terraform/build') {
+                    script {
+                        def instanceIps = sh(
+                            script: 'terraform output -json run_instances_ips',
+                            returnStdout: true
+                        );
+
+                        writeFile file: 'inventory.ini', text: """
+                            [vm]
+                            ${instanceIp}
+                        """
+
+                        sh 'cat inventory.ini'
+
+                        stash name: 'ansible-inventory', includes: 'inventory.ini'
                     }
                 }
             }
