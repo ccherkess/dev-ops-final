@@ -36,21 +36,16 @@
         working_dir: /app
         state: started
 
-    - name: Clean up Docker container
-      docker_container:
-        name: build_app
-        state: absent
+    - name: Rename War File
+      file:
+        path: "{{ dest_dir }}/target/{{ war_file }}"
+        dest: "{{ dest_dir }}/target/app.war"
+        state: file
 
-    - name: Create Dockerfile
+    - name: Copy Dockerfile
       copy:
+        src: "{{ dockerfile }}"
         dest: "{{ dockerfile_path }}"
-        content: |
-          FROM tomcat:9.0
-          WORKDIR /usr/local/tomcat
-          RUN rm -rf webapps/*
-          COPY {{ war_file }} webapps/ROOT.war
-          EXPOSE 8080
-          CMD ["catalina.sh", "run"]
 
     - name: Build Docker image
       docker_image:
@@ -72,4 +67,9 @@
 
     - name: Logout Docker
       docker_login:
+        state: absent
+
+    - name: Clean up Docker container
+      docker_container:
+        name: build_app
         state: absent

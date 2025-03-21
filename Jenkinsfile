@@ -13,6 +13,7 @@ pipeline {
         APP_REPOSITORY = "https://github.com/boxfuse/boxfuse-sample-java-war-hello.git"
         WAR_FILE_NAME = "hello-1.0.war"
         DOCKER_IMAGE_NAME = "hello"
+        DOCKER_FILE = "../docker/Dockerfile"
     }
 
     stages {
@@ -122,7 +123,8 @@ pipeline {
                                 password=${DOCKER_PASSWORD} \
                                 image_tag=${BUILD_NUMBER} \
                                 docker_image_name=${DOCKER_IMAGE_NAME} \
-                                war_file=${WAR_FILE_NAME}
+                                war_file=${WAR_FILE_NAME} \
+                                dockerfile=${DOCKER_FILE}
                             "
                     '''
                 }
