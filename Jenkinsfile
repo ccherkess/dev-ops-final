@@ -27,6 +27,7 @@ pipeline {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
                 }
+                reuseNode true
             }
 
             steps {
