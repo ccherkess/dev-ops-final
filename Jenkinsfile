@@ -211,7 +211,7 @@ pipeline {
             }
         }
 
-        stage('Ansible Build And Push App Image') {
+        stage('Ansible Run App') {
             agent {
                 docker {
                     image 'alpine/ansible:latest'
@@ -225,6 +225,7 @@ pipeline {
                     unstash 'ssh'
 
                     sh 'ansible -i inventory.ini -m ping all'
+
 //                     sh '''
 //                         ansible-playbook build_app_image.yml \
 //                             -i inventory.ini \
