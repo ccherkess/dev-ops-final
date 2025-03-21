@@ -28,7 +28,7 @@
           WORKDIR /usr/local/tomcat
           RUN rm -rf webapps/*
           COPY {{ war_file }} webapps/ROOT.war
-          EXPOSE {{ tomcat_port }}
+          EXPOSE 8080
           CMD ["catalina.sh", "run"]
 
     - name: Build Docker image
