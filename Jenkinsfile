@@ -234,7 +234,8 @@ pipeline {
                                 registry_url=${DOCKER_DOMAIN} \
                                 username=${DOCKER_USERNAME} \
                                 password=${DOCKER_PASSWORD} \
-                                docker_image_name=${DOCKER_IMAGE_NAME}:${BUILD_NUMBER} \
+                                docker_image_name=${DOCKER_IMAGE_NAME} \
+                                docker_tag=${BUILD_NUMBER} \
                                 app_port=8080
                             "
                     '''

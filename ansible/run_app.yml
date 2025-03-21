@@ -11,7 +11,7 @@
       password: "{{ password }}"
 
   tasks:
-    - name: Push Docker image to registry
+    - name: Pull Docker image to registry
       docker_image:
         name: "{{ docker_image_name }}"
         repository: "{{ registry_url }}/{{ docker_image_name }}"
@@ -21,7 +21,7 @@
     - name: Run Docker Image
       docker_container:
         name: "app"
-        image: "{{ docker_image_name }}"
+        image: "{{ docker_image_name }}:{{ image_tag }}"
         state: started
         ports:
           - "{{ app_port }}:{{ 8080 }}"
