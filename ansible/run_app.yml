@@ -15,7 +15,6 @@
       docker_container:
         name: "app"
         image: "{{ docker_image_name }}:{{ image_tag }}"
-        repository: "{{ registry_url }}/{{ docker_image_name }}"
         state: started
         ports:
           - "{{ app_port }}:8080"
