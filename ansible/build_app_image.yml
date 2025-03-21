@@ -16,12 +16,11 @@
 
   tasks:
     - name: Ensure Dependency
-      apt:
-        apt: name={{ item }} state=present update_cache=yes
-        loop:
-          - git
-          - openjdk-8-jdk
-          - maven
+      apt: name={{ item }} state=present update_cache=yes
+      loop:
+        - git
+        - openjdk-8-jdk
+        - maven
 
     - name: Clone repository
       git:
