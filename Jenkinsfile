@@ -125,6 +125,7 @@ pipeline {
                         } finally {
                             sh 'terraform destroy -auto-approve'
                         }
+                    }
                 }
             }
         }
