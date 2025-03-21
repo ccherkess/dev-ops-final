@@ -43,6 +43,7 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
+                    reuseNode true
                 }
             }
 
@@ -74,6 +75,7 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
+                    reuseNode true
                 }
             }
 
@@ -136,6 +138,7 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
+                    reuseNode true
                 }
             }
             steps {
