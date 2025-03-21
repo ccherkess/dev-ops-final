@@ -11,6 +11,13 @@
       password: "{{ password }}"
 
   tasks:
+    - name: Push Docker image to registry
+      docker_image:
+        name: "{{ docker_image_name }}"
+        repository: "{{ registry_url }}/{{ docker_image_name }}"
+        tag: "{{ image_tag }}"
+        pull: yes
+
     - name: Run Docker Image
       docker_container:
         name: "app"
