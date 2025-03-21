@@ -30,7 +30,7 @@ pipeline {
             }
 
             steps {
-                dir('terraform') {
+                dir('terraform/build') {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init'
                 }
@@ -46,20 +46,20 @@ pipeline {
             }
 
             steps {
-                dir('terraform') {
+                dir('terraform/build') {
                     dir (".ssh") {
                         unstash 'ssh'
                     }
 
                     sh '''
-                        terraform plan -no-color -chdir=build \
+                        terraform plan -no-color \
                         -var="yc_token=${YC_TOKEN}" \
                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
                         -var="yc_folder_id=${YC_FOLDER_ID}"
                     '''
 
                     sh '''
-                        terraform apply -auto-approve -no-color -chdir=build \
+                        terraform apply -auto-approve -no-color \
                         -var="yc_token=${YC_TOKEN}" \
                         -var="yc_cloud_id=${YC_CLOUD_ID}" \
                         -var="yc_folder_id=${YC_FOLDER_ID}"
@@ -77,7 +77,7 @@ pipeline {
             }
 
             steps {
-                dir('terraform') {
+                dir('terraform/build') {
                     script {
                         def instanceIp = sh(
                             script: 'terraform output -json instance_ip',
