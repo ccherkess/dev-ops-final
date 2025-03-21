@@ -241,6 +241,28 @@ pipeline {
                 }
             }
         }
+
+            stage('Terraform Destroy') {
+                agent {
+                    docker {
+                        image 'hashicorp/terraform:latest'
+                        args '--entrypoint='
+                    }
+                }
+                steps {
+                    input 'Destroy?'
+
+                    dir('terraform') {
+                        sh '''
+                            terraform destroy -auto-approve -no-color \
+                                -var="yc_token=${YC_TOKEN}" \
+                                -var="yc_cloud_id=${YC_CLOUD_ID}" \
+                                -var="yc_folder_id=${YC_FOLDER_ID}" \
+                                -var="build=true"
+                        '''
+                    }
+                }
+            }
     }
 
     post {
@@ -251,29 +273,6 @@ pipeline {
                 disableDeferredWipeout: true,
                 notFailBuild: true
             )
-            runTerraformDestroy()
-        }
-    }
-}
-
-def runTerraformDestroy() {
-    stage('Terraform Destroy on Failure') {
-        agent {
-            docker {
-                image 'hashicorp/terraform:latest'
-                args '--entrypoint='
-            }
-        }
-        steps {
-            dir('terraform') {
-                sh '''
-                    terraform destroy -auto-approve -no-color \
-                        -var="yc_token=${YC_TOKEN}" \
-                        -var="yc_cloud_id=${YC_CLOUD_ID}" \
-                        -var="yc_folder_id=${YC_FOLDER_ID}" \
-                        -var="build=true"
-                '''
-            }
         }
     }
 }
