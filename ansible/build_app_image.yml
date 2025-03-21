@@ -30,13 +30,13 @@
       docker_container:
         name: build_app
         image: maven:3.8.6-openjdk-8
-        volumes: "{{ dest_dir }}:/app"
+        volumes: "{{ dest_dir }}:/app:rw"
         command: mvn clean package
         working_dir: /app
         state: started
 
     - name: List files in target directory
-      shell: ls -la {{ dest_dir }}/target
+      shell: ls -la {{ dest_dir }}
       register: target_files
 
     - name: Debug target files
