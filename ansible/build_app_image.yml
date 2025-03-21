@@ -34,6 +34,7 @@
     - name: Build Docker image
       docker_image:
         name: "{{ docker_image_name }}"
+        tag: "{{ image_tag }}"
         build:
           path: "/app/target"
           dockerfile: "{{ dockerfile_path }}"
