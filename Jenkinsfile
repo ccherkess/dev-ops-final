@@ -14,6 +14,8 @@ pipeline {
     }
 
     stages {
+        agent any
+
         stage('Create and Cache .ssh dir') {
             steps {
                 sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
