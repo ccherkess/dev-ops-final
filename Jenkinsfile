@@ -122,10 +122,28 @@ pipeline {
                                         image_tag=${BUILD_NUMBER}
                                     "
                             '''
-                        } finally {
-                            sh 'terraform destroy -auto-approve'
+                        } catch {
+                            env.DESTROY_ON_FAILURE = true
+                            throw e
                         }
                     }
+                }
+            }
+        }
+
+        stage('Terraform Destroy on Failure') {
+            when {
+                expression { env.DESTROY_ON_FAILURE == 'true' }
+            }
+            agent {
+                docker {
+                    image 'hashicorp/terraform:latest'
+                    args '--entrypoint='
+                }
+            }
+            steps {
+                dir('terraform') {
+                    sh 'terraform destroy -auto-approve'
                 }
             }
         }
