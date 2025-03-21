@@ -15,6 +15,11 @@ pipeline {
 
     stages {
         stage('Create and Cache .ssh dir') {
+            agent {
+                docker {
+                    image 'alpine:latest'
+                }
+            }
             steps {
                 sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
                 stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
@@ -33,6 +38,8 @@ pipeline {
                 dir('terraform/build') {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init -no-color'
+
+                    stash name: 'terraform', includes: '*'
                 }
             }
         }
@@ -104,29 +111,30 @@ pipeline {
             }
 
             steps {
-                sh 'ls'
                 dir('ansible') {
                     unstash 'ansible-inventory'
                     unstash 'ssh'
 
-                    script {
-                        try {
-                            sh '''
-                                ansible-playbook build_app_image.yml \
-                                    -i inventory.ini \
-                                    --extra-vars "\
-                                        repo_url=${APP_REPOSITORY} \
-                                        dest_dir=/app \
-                                        registry_url=${DOCKER_DOMAIN} \
-                                        username=${DOCKER_USERNAME} \
-                                        password=${DOCKER_PASSWORD} \
-                                        image_tag=${BUILD_NUMBER}
-                                    "
-                            '''
-                        } catch (Exception e) {
-                            env.DESTROY_ON_FAILURE = true
-                        }
-                    }
+                    sh 'ansible -i inventory.ini -m ping all'
+
+//                     script {
+//                         try {
+//                             sh '''
+//                                 ansible-playbook build_app_image.yml \
+//                                     -i inventory.ini \
+//                                     --extra-vars "\
+//                                         repo_url=${APP_REPOSITORY} \
+//                                         dest_dir=/app \
+//                                         registry_url=${DOCKER_DOMAIN} \
+//                                         username=${DOCKER_USERNAME} \
+//                                         password=${DOCKER_PASSWORD} \
+//                                         image_tag=${BUILD_NUMBER}
+//                                     "
+//                             '''
+//                         } catch (Exception e) {
+//                             env.DESTROY_ON_FAILURE = true
+//                         }
+//                     }
                 }
             }
         }
@@ -140,6 +148,7 @@ pipeline {
             }
             steps {
                 dir('terraform/build') {
+                    unstash 'terraform'
                     sh 'terraform destroy -auto-approve -no-color'
                 }
 
