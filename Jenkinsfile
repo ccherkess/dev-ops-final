@@ -122,14 +122,6 @@ pipeline {
                     '''
                 }
             }
-
-            post {
-                failure {
-                    dir('terraform') {
-                        sh 'terraform destroy -auto-approve'
-                    }
-                }
-            }
         }
     }
 

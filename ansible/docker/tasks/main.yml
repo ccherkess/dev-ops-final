@@ -11,9 +11,14 @@
     dest: /etc/docker/daemon.json
     content: |
       {
-        "insecure-registries": [{{ registry_url }}]
+        "insecure-registries": ["{{ registry_url }}"]
       }
     force: yes
+
+- name: Restart Docker service
+  service:
+    name: docker
+    state: restarted
 
 - name: Login docker
   docker_login:
