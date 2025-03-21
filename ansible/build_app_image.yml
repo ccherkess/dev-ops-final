@@ -13,11 +13,33 @@
       username: "{{ username }}"
       password: "{{ password }}"
 
-    - role: build
-      repo_url: "{{ repo_url }}"
-      dest_url: "{{ dest_url }}"
-
   tasks:
+    - name: Ensure git
+      apt:
+        name: git
+        state: present
+
+    - name: Clone repository
+      git:
+        repo: "{{ repo_url }}"
+        dest: "{{ dest_dir }}"
+        version: master
+
+    - name: Build app inside Docker container
+      docker_container:
+        name: build_app
+        image: maven:3.8.6-openjdk-8
+        volumes:
+          - "{{ dest_dir }}:/app"
+        command: mvn clean package
+        working_dir: /app
+        state: started
+
+    - name: Clean up Docker container
+      docker_container:
+        name: build_app
+        state: absent
+
     - name: Create Dockerfile
       copy:
         dest: "{{ dockerfile_path }}"
