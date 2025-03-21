@@ -64,7 +64,7 @@ resource "yandex_compute_instance" "vm-build" {
 }
 
 output "build_instance_ip" {
-  value = yandex_compute_instance.vm-build.network_interface[0].nat_ip_address
+  value = yandex_compute_instance.vm-build[0].network_interface[0].nat_ip_address
 }
 
 resource "yandex_compute_instance" "vm-run" {
@@ -117,5 +117,5 @@ resource "yandex_compute_instance" "vm-run" {
 }
 
 output "run_instances_ips" {
-  value = yandex_compute_instance.vm-run.network_interface[*].nat_ip_address
+  value = yandex_compute_instance.vm-run[*].network_interface[0].nat_ip_address
 }
