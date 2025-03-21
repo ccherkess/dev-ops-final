@@ -15,10 +15,13 @@
       password: "{{ password }}"
 
   tasks:
-    - name: Ensure git
+    - name: Ensure Dependency
       apt:
-        name: git
-        state: present
+        apt: name={{ item }} state=present update_cache=yes
+        loop:
+          - git
+          - openjdk-8-jdk
+          - maven
 
     - name: Clone repository
       git:
@@ -26,22 +29,11 @@
         dest: "{{ dest_dir }}"
         version: master
 
-    - name: Build app inside Docker container
-      docker_container:
-        name: build_app
-        image: maven:3.8.6-openjdk-8
-        volumes: "{{ dest_dir }}:/app:rw"
-        command: mvn clean package
-        working_dir: /app
-        state: started
-
-    - name: List files in target directory
-      shell: ls -la {{ dest_dir }}
-      register: target_files
-
-    - name: Debug target files
-      debug:
-        var: target_files.stdout
+    - name: Build App
+      command: mvn clean package
+      args:
+        chdir: "{{ dest_dir }}"
+      notify: fetch war file
 
     - name: Rename War File
       copy:
