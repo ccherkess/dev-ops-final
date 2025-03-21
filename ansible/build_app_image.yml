@@ -39,8 +39,8 @@
     - name: Rename War File
       copy:
         remote_src: True
-        dest: "{{ dest_dir }}/target/{{ war_file}}"
-        path: "{{ dest_dir }}/target/app.war"
+        dest: "{{ dest_dir }}/target/{{ war_file }}"
+        src: "{{ dest_dir }}/target/app.war"
 
     - name: Copy Dockerfile
       copy:
