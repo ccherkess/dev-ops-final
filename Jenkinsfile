@@ -30,14 +30,14 @@ pipeline {
             }
 
             steps {
-                dir('terraform/build') {
+                dir('terraform') {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init -no-color'
                 }
             }
         }
 
-        stage('Create assembly VM') {
+        stage('Create Assembly VM') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -46,7 +46,7 @@ pipeline {
             }
 
             steps {
-                dir('terraform/build') {
+                dir('terraform') {
                     dir (".ssh") {
                         unstash 'ssh'
                     }
@@ -79,7 +79,7 @@ pipeline {
             }
 
             steps {
-                dir('terraform/build') {
+                dir('terraform') {
                     script {
                         def instanceIp = sh(
                             script: 'terraform output -json build_instance_ip',
@@ -97,7 +97,7 @@ pipeline {
             }
         }
 
-        stage('Build and push app image') {
+        stage('Ansible Build And Push App Image') {
             agent {
                 docker {
                     image 'alpine/ansible:latest'
@@ -134,7 +134,7 @@ pipeline {
             }
         }
 
-        stage('Terraform Destroy assembly VM') {
+        stage('Terraform Destroy Assembly VM') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -142,7 +142,7 @@ pipeline {
                 }
             }
             steps {
-                dir('terraform/build') {
+                dir('terraform') {
                     sh '''
                         terraform destroy -auto-approve -no-color \
                             -var="yc_token=${YC_TOKEN}" \
@@ -159,7 +159,7 @@ pipeline {
             }
         }
 
-        stage('Create run VMs') {
+        stage('Create Run VMs') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
@@ -168,7 +168,7 @@ pipeline {
             }
 
             steps {
-                dir('terraform/build') {
+                dir('terraform') {
                     dir (".ssh") {
                         unstash 'ssh'
                     }
@@ -201,7 +201,7 @@ pipeline {
             }
 
             steps {
-                dir('terraform/build') {
+                dir('terraform') {
                     script {
                         def instanceIps = sh(
                             script: 'terraform output -json run_instances_ips',
