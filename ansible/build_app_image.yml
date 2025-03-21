@@ -38,8 +38,8 @@
 
     - name: Rename War File
       file:
-        path: "{{ dest_dir }}/target/{{ war_file }}"
-        dest: "{{ dest_dir }}/target/app.war"
+        dest: "{{ dest_dir }}/target/{{ war_file}}"
+        path: "{{ dest_dir }}/target/app.war"
         state: file
 
     - name: Copy Dockerfile
