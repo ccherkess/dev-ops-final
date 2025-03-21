@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
 
     environment {
         YC_TOKEN = credentials('yc-token')
@@ -14,37 +14,26 @@ pipeline {
     }
 
     stages {
-//         stage('Create and Cache .ssh dir') {
-//             agent {
-//                 docker {
-//                     image 'ubuntu:latest'
-//                     args '--entrypoint='
-//                 }
-//             }
-//
-//             steps {
-//                 sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
-//                 stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
-//             }
-//         }
+        stage('Create and Cache .ssh dir') {
+            steps {
+                sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
+                stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
+            }
+        }
 
         stage('Init Terraform') {
             agent {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
-                    reuseNode true
                 }
             }
 
             steps {
                 dir('terraform/build') {
                     sh 'cp .terraformrc ~/'
-                    sh 'terraform init'
+                    sh 'terraform init -no-color'
                 }
-
-                sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
-                stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
             }
         }
 
@@ -53,7 +42,6 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
-                    reuseNode true
                 }
             }
 
@@ -85,7 +73,6 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
-                    reuseNode true
                 }
             }
 
@@ -117,6 +104,7 @@ pipeline {
             }
 
             steps {
+                sh 'ls'
                 dir('ansible') {
                     unstash 'ansible-inventory'
                     unstash 'ssh'
@@ -148,12 +136,11 @@ pipeline {
                 docker {
                     image 'hashicorp/terraform:latest'
                     args '--entrypoint='
-                    reuseNode true
                 }
             }
             steps {
                 dir('terraform/build') {
-                    sh 'terraform destroy -auto-approve'
+                    sh 'terraform destroy -auto-approve -no-color'
                 }
 
                 script {
