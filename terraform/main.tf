@@ -91,15 +91,15 @@ resource "yandex_compute_instance" "vm-run" {
     nat = true
   }
 
-  provisioner "local-exec" {
-    command = <<EOT
-      until nc -z ${yandex_compute_instance.vm-run[count.index].network_interface[0].nat_ip_address} 22; do
-        echo "Waiting for VM to be ready..."
-        sleep 5
-      done
-      echo "VM is ready!"
-    EOT
-  }
+  # provisioner "local-exec" {
+  #   command = <<EOT
+  #     until nc -z ${yandex_compute_instance.vm-run[count.index].network_interface[0].nat_ip_address} 22; do
+  #       echo "Waiting for VM to be ready..."
+  #       sleep 5
+  #     done
+  #     echo "VM is ready!"
+  #   EOT
+  # }
 
   metadata = {
     user-data = sensitive(<<-EOT
@@ -117,5 +117,5 @@ resource "yandex_compute_instance" "vm-run" {
 }
 
 output "run_instances_ips" {
-  value = var.run ? yandex_compute_instance.vm-run[0].network_interface[0].nat_ip_address : []
+  value = var.run ? yandex_compute_instance.vm-run[*].network_interface[0].nat_ip_address : []
 }
