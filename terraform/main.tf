@@ -107,7 +107,7 @@ resource "yandex_compute_instance" "vm-run" {
 }
 
 resource "null_resource" "wait_for_run_init" {
-  for_each = yandex_compute_instance.vm-run
+  for_each = var.run ? yandex_compute_instance.vm-run : {}
 
   provisioner "local-exec" {
     command = <<-EOF
@@ -121,5 +121,5 @@ resource "null_resource" "wait_for_run_init" {
 }
 
 output "run_instances_ips" {
-  value = var.run ? yandex_compute_instance.vm-run[*].network_interface[0].nat_ip_address : []
+  value = [for vm in yandex_compute_instance.vm-run : vm.network_interface[0].nat_ip_address]
 }
