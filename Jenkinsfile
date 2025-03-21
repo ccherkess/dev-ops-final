@@ -194,13 +194,13 @@ pipeline {
                             script: 'terraform output -json run_instances_ips',
                             returnStdout: true
                         )
-                        .replaceAll(/^\[|\]$/, '')
-                        .replaceAll(/"/, '')
+
+                        def ips = new groovy.json.JsonSlurper().parseText(instanceIps)
 
 
                         writeFile file: 'inventory.ini', text: """
                             [vm]
-                            ${instanceIps.join("\n")}
+                            ${ips.join("\n")}
                         """
 
                         sh 'cat inventory.ini'
