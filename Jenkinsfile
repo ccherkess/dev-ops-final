@@ -14,14 +14,19 @@ pipeline {
     }
 
     stages {
-        stage('Create and Cache .ssh dir') {
-            agent any
-
-            steps {
-                sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
-                stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
-            }
-        }
+//         stage('Create and Cache .ssh dir') {
+//             agent {
+//                 docker {
+//                     image 'ubuntu:latest'
+//                     args '--entrypoint='
+//                 }
+//             }
+//
+//             steps {
+//                 sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
+//                 stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
+//             }
+//         }
 
         stage('Init Terraform') {
             agent {
@@ -37,6 +42,9 @@ pipeline {
                     sh 'cp .terraformrc ~/'
                     sh 'terraform init'
                 }
+
+                sh 'ssh-keygen -t rsa -b 2048 -f id_rsa -N "" -q'
+                stash name: 'ssh', includes: 'id_rsa, id_rsa.pub'
             }
         }
 
