@@ -124,7 +124,6 @@ pipeline {
                             '''
                         } catch (Exception e) {
                             env.DESTROY_ON_FAILURE = true
-                            echo e
                         }
                     }
                 }
