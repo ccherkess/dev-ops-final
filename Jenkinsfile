@@ -17,7 +17,7 @@ pipeline {
         stage('Create and Cache .ssh dir') {
             agent {
                 docker {
-                    image 'alpine:latest'
+                    image 'ubuntu:latest'
                 }
             }
             steps {
