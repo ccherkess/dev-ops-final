@@ -13,11 +13,11 @@
   tasks:
     - name: Run Docker Image
       docker_container:
-        name: "{{ docker_container_name }}"
+        name: "app"
         image: "{{ docker_image_name }}"
         state: started
         ports:
-          - "{{ app_port }}:{{ app_port }}"
+          - "{{ app_port }}:{{ 8080 }}"
         restart_policy: always
 
     - name: Logout Docker

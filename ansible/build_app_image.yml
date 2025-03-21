@@ -5,9 +5,7 @@
   become: yes
 
   vars:
-    war_file: hello-1.0.war
     dockerfile_path: /dockerfile
-    docker_image_name: app
 
   roles:
     - role: docker
