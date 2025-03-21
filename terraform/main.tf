@@ -117,5 +117,5 @@ resource "yandex_compute_instance" "vm-run" {
 }
 
 output "run_instances_ips" {
-  value = var.run ? yandex_compute_instance.vm-run[*].network_interface[0].nat_ip_address : []
+  value = var.run ? yandex_compute_instance.vm-run[0].network_interface[0].nat_ip_address : []
 }
