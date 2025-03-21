@@ -1,0 +1,25 @@
+
+---
+- name: Build and push application docker image
+  hosts: vm
+  become: yes
+
+  roles:
+    - role: docker
+      registry_url: "{{ registry_url }}"
+      username: "{{ username }}"
+      password: "{{ password }}"
+
+  tasks:
+    - name: Run Docker Image
+      docker_container:
+        name: "{{ docker_container_name }}"
+        image: "{{ docker_image_name }}"
+        state: started
+        ports:
+          - "{{ app_port }}:{{ app_port }}"
+        restart_policy: always
+
+    - name: Logout Docker
+      docker_login:
+        state: absent

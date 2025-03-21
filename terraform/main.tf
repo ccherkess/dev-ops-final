@@ -70,7 +70,7 @@ output "build_instance_ip" {
 resource "yandex_compute_instance" "vm-run" {
   count = var.run ? var.run_count : 0
   platform_id = var.yc_platform_id
-  name = "vm-run-${count.index}"
+  name = "vm-run-${count.index + 1}"
 
   resources {
     core_fraction = 100
