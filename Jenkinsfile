@@ -193,17 +193,50 @@ pipeline {
                         def instanceIps = sh(
                             script: 'terraform output -json run_instances_ips',
                             returnStdout: true
-                        );
+                        )
+                        .replaceAll(/^\[|\]$/, '')
+                        .replaceAll(/"/, '')
+
 
                         writeFile file: 'inventory.ini', text: """
                             [vm]
-                            ${instanceIp}
+                            ${instanceIps.join("\n")}
                         """
 
                         sh 'cat inventory.ini'
 
                         stash name: 'ansible-inventory', includes: 'inventory.ini'
                     }
+                }
+            }
+        }
+
+        stage('Ansible Build And Push App Image') {
+            agent {
+                docker {
+                    image 'alpine/ansible:latest'
+                    args '--entrypoint='
+                }
+            }
+
+            steps {
+                dir('ansible') {
+                    unstash 'ansible-inventory'
+                    unstash 'ssh'
+
+                    sh 'ansible -i inventory.ini -m ping all'
+//                     sh '''
+//                         ansible-playbook build_app_image.yml \
+//                             -i inventory.ini \
+//                             --extra-vars "\
+//                                 repo_url=${APP_REPOSITORY} \
+//                                 dest_dir=/app \
+//                                 registry_url=${DOCKER_DOMAIN} \
+//                                 username=${DOCKER_USERNAME} \
+//                                 password=${DOCKER_PASSWORD} \
+//                                 image_tag=${BUILD_NUMBER}
+//                             "
+//                     '''
                 }
             }
         }
