@@ -11,7 +11,7 @@
     dest: /etc/docker/daemon.json
     content: |
       {
-        "insecure-registries": ["your-registry-domain:5000"]
+        "insecure-registries": [{{ registry_url }}]
       }
     force: yes
 
