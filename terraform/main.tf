@@ -111,7 +111,7 @@ resource "null_resource" "wait_for_run_init" {
 
   provisioner "local-exec" {
     command = <<-EOF
-      until nc -z ${each.network_interface[0].nat_ip_address} 22; do
+      until nc -z ${each.value.network_interface[0].nat_ip_address} 22; do
           echo "Waiting for VM to be ready..."
           sleep 5
         done
