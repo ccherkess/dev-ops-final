@@ -122,7 +122,7 @@ pipeline {
                                         image_tag=${BUILD_NUMBER}
                                     "
                             '''
-                        } catch {
+                        } catch (Exception e) {
                             env.DESTROY_ON_FAILURE = true
                             throw e
                         }
